@@ -17,11 +17,11 @@ volatile int shared_data = 0;
 
 static int thread_fn(void *data) {
     int iter;
-    printk("starting initialization of thread");
+    printk("starting initialization of thread \n");
     for (iter = 0; iter < num_iters; iter++) {
         shared_data++;
     }
-    printk("done initialization of thread");
+    printk("done initialization of thread \n");
 
     while (!kthread_should_stop()) {
         schedule();
