@@ -6,21 +6,46 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
+#include <linux/kthread.h>
+#include <linux/sched.h>
 
-const int thread_count = 4
+#define num_threads 4
+#define num_iters 1000000
+struct task_struct *thread_structs[num_threads];
+
+volatile int shared_data = 0;
+
+static int thread_fn(void *data) {
+    int iter;
+    for (iter = 0; iter < num_iters; iter++) {
+        shared_data++;
+    }
+
+    while (!kthread_should_stop()) {
+        schedule();
+    }
+    return 0;
+}
+
 /* init function - logs that initialization happened, returns success */
-static int 
-race_init(void)
-{
-    printk(KERN_ALERT "simple module initialized\n");
+static int race_init(void) {
+    int cpu; 
+    for (cpu = 0; cpu < num_threads; cpu++) {
+        thread_structs[cpu] = kthread_create(&thread_fn, NULL, "thread");
+        kthread_bind(thread_structs[cpu], cpu);
+        wake_up_process(thread_structs[cpu]);
+    }
+    printk(KERN_ALERT "race module initialized\n");
     return 0;
 }
 
 /* exit function - logs that the module is being removed */
-static void 
-race_exit(void)
-{
-    printk(KERN_ALERT "simple module is being unloaded\n");
+static void race_exit(void) {
+    int cpu;
+    for (cpu = 0; cpu < num_threads; cpu++) {
+        kthread_stop(thread_structs[cpu]);
+    }
+    printk(KERN_ALERT "race module is being unloaded\n");
 }
 
 module_init(race_init);
