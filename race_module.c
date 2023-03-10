@@ -45,7 +45,7 @@ static void race_exit(void) {
     for (cpu = 0; cpu < num_threads; cpu++) {
         kthread_stop(thread_structs[cpu]);
     }
-    printk(KERN_ALERT "race module is being unloaded\n");
+    printk(KERN_ALERT "race module unloaded\n got final shared_data value %d\n", shared_data);
 }
 
 module_init(race_init);
