@@ -18,10 +18,11 @@ struct task_struct *thread_structs[num_threads];
 
 static int thread_fn(void *data) {
     int iter;
+    printk("starting initialization of thread \n");
     for (iter = 0; iter < num_iters; iter++) {
         atomic_add(1, &shared_data);
     }
-
+    printk("done initialization of thread \n");
     while (!kthread_should_stop()) {
         schedule();
     }
