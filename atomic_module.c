@@ -37,7 +37,7 @@ static int race_init(void) {
         kthread_bind(thread_structs[cpu], cpu);
         wake_up_process(thread_structs[cpu]);
     }
-    printk(KERN_ALERT "race module initialized\n");
+    printk(KERN_ALERT "atomic module initialized\n");
     return 0;
 }
 
@@ -47,7 +47,7 @@ static void race_exit(void) {
     for (cpu = 0; cpu < num_threads; cpu++) {
         kthread_stop(thread_structs[cpu]);
     }
-    printk(KERN_ALERT "race module unloaded\n got final shared_data value %d\n", atomic_read(&shared_data));
+    printk(KERN_ALERT "atomic module unloaded\n got final shared_data value %d\n", atomic_read(&shared_data));
 }
 
 module_init(race_init);
