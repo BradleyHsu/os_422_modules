@@ -6,6 +6,8 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
+#include <linux/hrtimer.h>
+#include <linux/ktime.h>
 
 //static vars
 static ktime_t timer_interval;
