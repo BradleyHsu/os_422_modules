@@ -9,16 +9,16 @@
 #include <linux/hrtimer.h>
 #include <linux/ktime.h>
 
-//static vars
-static ktime_t timer_interval;
-static struct hrtimer timer;
-
 //params
 static ulong log_sec = 1;
 static ulong log_nsec = 0;
 
 module_param(log_sec, ulong, 0);
 module_param(log_nsec, ulong, 0);
+
+//static vars
+static ktime_t timer_interval = ktime_set(log_sec, log_nsec);
+static struct hrtimer timer;
 
 //timer callback
 static enum hrtimer_restart timer_callback(struct hrtimer *timer)
