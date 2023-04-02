@@ -18,11 +18,11 @@ struct task_struct *thread_structs[num_threads];
 
 static int thread_fn(void *data) {
     int iter;
-    printk("starting initialization of thread \n");
+    printk("starting initialization of thread %d\n");
     for (iter = 0; iter < num_iters; iter++) {
         atomic_add(1, &shared_data);
     }
-    printk("done initialization of thread \n");
+    printk("done initialization of thread %d\n", *data);
     while (!kthread_should_stop()) {
         schedule();
     }
@@ -34,7 +34,7 @@ static int race_init(void) {
     int cpu; 
     atomic_set(&shared_data, 0);
     for (cpu = 0; cpu < num_threads; cpu++) {
-        thread_structs[cpu] = kthread_create(&thread_fn, NULL, "thread");
+        thread_structs[cpu] = kthread_create(&thread_fn, CPU, "thread");
         kthread_bind(thread_structs[cpu], cpu);
         wake_up_process(thread_structs[cpu]);
     }
