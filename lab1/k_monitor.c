@@ -17,7 +17,7 @@ module_param(log_sec, ulong, 0);
 module_param(log_nsec, ulong, 0);
 
 //static vars
-static ktime_t timer_interval = ktime_set(log_sec, log_nsec);
+static ktime_t timer_interval; 
 static struct hrtimer timer;
 
 //timer callback
@@ -34,6 +34,7 @@ static int
 k_monitor_init(void)
 {
     printk(KERN_ALERT "k_monitor module initialized\n");
+    timer_interval = ktime_set(log_sec, log_nsec);
     hrtimer_init(&timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
     timer.function = &timer_callback;
     hrtimer_start(&timer, timer_interval, HRTIMER_MODE_REL);
