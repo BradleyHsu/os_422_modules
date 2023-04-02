@@ -29,9 +29,9 @@ static enum hrtimer_restart timer_callback(struct hrtimer *timer)
 
 /* init function - logs that initialization happened, returns success */
 static int 
-simple_init(void)
+k_monitor_init(void)
 {
-    printk(KERN_ALERT "lab 1 module initialized\n");
+    printk(KERN_ALERT "k_monitor module initialized\n");
     hrtimer_init(timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
     timer.function = &timer_callback;
     hrtimer_start(timer, timer_interval, HRTIMER_MODE_REL)
@@ -40,14 +40,14 @@ simple_init(void)
 
 /* exit function - logs that the module is being removed */
 static void 
-simple_exit(void)
+k_monitor_exit(void)
 {
-    printk(KERN_ALERT "lab 1 module is being unloaded\n");
+    printk(KERN_ALERT "k_monitor module is being unloaded\n");
     hrtimer_cancel(timer);
 }
 
-module_init(simple_init);
-module_exit(simple_exit);
+module_init(k_monitor_init);
+module_exit(k_monitor_exit);
 
 MODULE_LICENSE ("GPL");
 MODULE_AUTHOR ("LKD Chapter 17");
