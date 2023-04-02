@@ -34,9 +34,9 @@ static int
 k_monitor_init(void)
 {
     printk(KERN_ALERT "k_monitor module initialized\n");
-    hrtimer_init(timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+    hrtimer_init(&timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
     timer.function = &timer_callback;
-    hrtimer_start(timer, timer_interval, HRTIMER_MODE_REL)
+    hrtimer_start(&timer, timer_interval, HRTIMER_MODE_REL);
     return 0;
 }
 
@@ -45,7 +45,7 @@ static void
 k_monitor_exit(void)
 {
     printk(KERN_ALERT "k_monitor module is being unloaded\n");
-    hrtimer_cancel(timer);
+    hrtimer_cancel(&timer);
 }
 
 module_init(k_monitor_init);
