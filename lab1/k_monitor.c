@@ -70,9 +70,9 @@ static void
 k_monitor_exit(void)
 {
     printk(KERN_ALERT "k_monitor module is being unloaded\n");
-    wake_up_process(task);
     hrtimer_cancel(&timer);
     kthread_stop(task);
+    wake_up_process(task);
 }
 
 module_init(k_monitor_init);
