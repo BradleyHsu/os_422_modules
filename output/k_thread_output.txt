@@ -1,0 +1,75 @@
+cat ./k_thread_run.sh
+sudo dmesg --clear
+sudo insmod k_monitor.ko log_sec=2 log_nsec=0
+sleep 6
+sudo rmmod k_monitor
+dmesg
+
+sudo dmesg --clear
+sudo insmod k_monitor.ko log_sec=1 log_nsec=0
+sleep 3
+sudo rmmod k_monitor
+dmesg
+
+sudo dmesg --clear
+sudo insmod k_monitor.ko log_sec=0 log_nsec=100000000
+sleep .3
+sudo rmmod k_monitor
+dmesg
+[44756.277973] k_monitor module initialized
+[44756.278571] lab 1 module body callback starting
+[44756.278608] lab 1 module body callback
+[44756.278631] nvcsw: 1, nivcsw: 1
+[44756.278647] iterations: 1
+[44758.278403] lab 1 module timer callback
+[44758.278482] lab 1 module body callback
+[44758.278510] nvcsw: 2, nivcsw: 2
+[44758.278530] iterations: 2
+[44760.278410] lab 1 module timer callback
+[44760.278492] lab 1 module body callback
+[44760.278519] nvcsw: 3, nivcsw: 2
+[44760.278545] iterations: 3
+[44762.278416] lab 1 module timer callback
+[44762.278491] lab 1 module body callback
+[44762.278518] nvcsw: 4, nivcsw: 2
+[44762.278547] iterations: 4
+[44762.368231] k_monitor module is being unloaded
+[44762.368342] lab 1 module body callback terminating
+[44762.595528] k_monitor module initialized
+[44762.595940] lab 1 module body callback starting
+[44762.595968] lab 1 module body callback
+[44762.596966] nvcsw: 1, nivcsw: 1
+[44762.596982] iterations: 1
+[44763.595935] lab 1 module timer callback
+[44763.596022] lab 1 module body callback
+[44763.596058] nvcsw: 2, nivcsw: 1
+[44763.596074] iterations: 2
+[44764.595937] lab 1 module timer callback
+[44764.596029] lab 1 module body callback
+[44764.596066] nvcsw: 3, nivcsw: 1
+[44764.596082] iterations: 3
+[44765.595939] lab 1 module timer callback
+[44765.596028] lab 1 module body callback
+[44765.596063] nvcsw: 4, nivcsw: 1
+[44765.596079] iterations: 4
+[44765.680859] k_monitor module is being unloaded
+[44765.680963] lab 1 module body callback terminating
+[44765.897315] k_monitor module initialized
+[44765.897707] lab 1 module body callback starting
+[44765.897734] lab 1 module body callback
+[44765.897757] nvcsw: 1, nivcsw: 0
+[44765.897772] iterations: 1
+[44765.997701] lab 1 module timer callback
+[44765.997771] lab 1 module body callback
+[44765.997798] nvcsw: 2, nivcsw: 0
+[44765.997825] iterations: 2
+[44766.097699] lab 1 module timer callback
+[44766.097766] lab 1 module body callback
+[44766.097793] nvcsw: 3, nivcsw: 0
+[44766.097808] iterations: 3
+[44766.197698] lab 1 module timer callback
+[44766.197765] lab 1 module body callback
+[44766.197792] nvcsw: 4, nivcsw: 0
+[44766.197807] iterations: 4
+[44766.283629] k_monitor module is being unloaded
+[44766.283732] lab 1 module body callback terminating

@@ -1,0 +1,249 @@
+cat ./mt_thread_run.sh
+sudo dmesg --clear
+sudo insmod mt_k_monitor.ko log_sec=2 log_nsec=0
+sleep 6
+sudo rmmod mt_k_monitor
+dmesg
+
+sudo dmesg --clear
+sudo insmod mt_k_monitor.ko log_sec=1 log_nsec=0
+sleep 3
+sudo rmmod mt_k_monitor
+dmesg
+
+sudo dmesg --clear
+sudo insmod mt_k_monitor.ko log_sec=0 log_nsec=100000000
+sleep .3
+sudo rmmod mt_k_monitor
+dmesg
+[44528.191824] k_monitor module initialized
+[44528.192774] lab 1 module body callback starting
+[44528.192780] lab 1 module body callback starting
+[44528.192785] lab 1 module body callback starting
+[44528.192795] lab 1 module body callback
+[44528.192799] lab 1 module body callback
+[44528.192809] nvcsw: 1, nivcsw: 0
+[44528.192821] nvcsw: 1, nivcsw: 0
+[44528.192830] lab 1 module body callback
+[44528.192835] iterations: 1
+[44528.192844] nvcsw: 1, nivcsw: 0
+[44528.192856] iterations: 1
+[44528.192860] iterations: 1
+[44528.192868] thread: 1
+[44528.192872] thread: 0
+[44528.192881] thread: 2
+[44528.194244] lab 1 module body callback starting
+[44528.194274] lab 1 module body callback
+[44528.194296] nvcsw: 1, nivcsw: 0
+[44528.194311] iterations: 1
+[44528.194325] thread: 3
+[44530.192787] lab 1 module timer callback
+[44530.192872] lab 1 module body callback
+[44530.192878] lab 1 module body callback
+[44530.192894] nvcsw: 2, nivcsw: 0
+[44530.192903] lab 1 module body callback
+[44530.192907] lab 1 module body callback
+[44530.192920] nvcsw: 2, nivcsw: 0
+[44530.192926] nvcsw: 2, nivcsw: 0
+[44530.192931] nvcsw: 2, nivcsw: 0
+[44530.192940] iterations: 2
+[44530.192944] iterations: 2
+[44530.192954] iterations: 2
+[44530.192958] thread: 1
+[44530.192962] thread: 0
+[44530.192971] iterations: 2
+[44530.192981] thread: 2
+[44530.192992] thread: 3
+[44532.192790] lab 1 module timer callback
+[44532.192870] lab 1 module body callback
+[44532.192875] lab 1 module body callback
+[44532.192890] nvcsw: 3, nivcsw: 0
+[44532.192899] lab 1 module body callback
+[44532.192904] lab 1 module body callback
+[44532.192916] nvcsw: 3, nivcsw: 0
+[44532.192921] nvcsw: 3, nivcsw: 0
+[44532.192927] nvcsw: 3, nivcsw: 0
+[44532.192935] iterations: 3
+[44532.192940] iterations: 3
+[44532.192949] iterations: 3
+[44532.192953] thread: 0
+[44532.192957] thread: 3
+[44532.192965] iterations: 3
+[44532.192975] thread: 2
+[44532.192985] thread: 1
+[44534.192792] lab 1 module timer callback
+[44534.192869] lab 1 module body callback
+[44534.192874] lab 1 module body callback
+[44534.192880] lab 1 module body callback
+[44534.192892] nvcsw: 4, nivcsw: 0
+[44534.192897] nvcsw: 4, nivcsw: 0
+[44534.192906] lab 1 module body callback
+[44534.192910] iterations: 4
+[44534.192921] nvcsw: 4, nivcsw: 0
+[44534.192927] nvcsw: 4, nivcsw: 0
+[44534.192930] thread: 0
+[44534.192941] iterations: 4
+[44534.192945] iterations: 4
+[44534.192955] thread: 1
+[44534.192960] thread: 3
+[44534.192968] iterations: 4
+[44534.192985] thread: 2
+[44534.282825] k_monitor module is being unloaded
+[44534.282919] lab 1 module body callback terminating
+[44534.283138] lab 1 module body callback terminating
+[44534.283255] lab 1 module body callback terminating
+[44534.283364] lab 1 module body callback terminating
+[44534.499966] k_monitor module initialized
+[44534.501421] lab 1 module body callback starting
+[44534.501429] lab 1 module body callback starting
+[44534.501434] lab 1 module body callback starting
+[44534.501446] lab 1 module body callback
+[44534.501450] lab 1 module body callback
+[44534.501462] nvcsw: 1, nivcsw: 1
+[44534.501472] nvcsw: 1, nivcsw: 0
+[44534.501483] lab 1 module body callback
+[44534.501487] iterations: 1
+[44534.501496] nvcsw: 1, nivcsw: 0
+[44534.501508] iterations: 1
+[44534.501515] thread: 2
+[44534.501520] thread: 0
+[44534.501528] iterations: 1
+[44534.501544] thread: 1
+[44534.501618] lab 1 module body callback starting
+[44534.501643] lab 1 module body callback
+[44534.501666] nvcsw: 1, nivcsw: 0
+[44534.501681] iterations: 1
+[44534.501696] thread: 3
+[44535.501437] lab 1 module timer callback
+[44535.501522] lab 1 module body callback
+[44535.501527] lab 1 module body callback
+[44535.501539] lab 1 module body callback
+[44535.501546] nvcsw: 2, nivcsw: 0
+[44535.501555] lab 1 module body callback
+[44535.501561] nvcsw: 2, nivcsw: 0
+[44535.501569] iterations: 2
+[44535.501576] nvcsw: 2, nivcsw: 0
+[44535.501588] nvcsw: 2, nivcsw: 1
+[44535.501593] thread: 2
+[44535.501597] iterations: 2
+[44535.501606] iterations: 2
+[44535.501610] thread: 3
+[44535.501618] iterations: 2
+[44535.501628] thread: 1
+[44535.501639] thread: 0
+[44536.501432] lab 1 module timer callback
+[44536.501511] lab 1 module body callback
+[44536.501517] lab 1 module body callback
+[44536.501522] lab 1 module body callback
+[44536.501534] nvcsw: 3, nivcsw: 1
+[44536.501543] nvcsw: 3, nivcsw: 0
+[44536.501555] nvcsw: 3, nivcsw: 0
+[44536.501562] lab 1 module body callback
+[44536.501566] iterations: 3
+[44536.501577] iterations: 3
+[44536.501582] nvcsw: 3, nivcsw: 0
+[44536.501586] thread: 2
+[44536.501593] thread: 0
+[44536.501597] iterations: 3
+[44536.501609] iterations: 3
+[44536.501612] thread: 3
+[44536.501625] thread: 1
+[44537.501439] lab 1 module timer callback
+[44537.501513] lab 1 module body callback
+[44537.501519] lab 1 module body callback
+[44537.501534] nvcsw: 4, nivcsw: 0
+[44537.501543] lab 1 module body callback
+[44537.501555] lab 1 module body callback
+[44537.501561] nvcsw: 4, nivcsw: 1
+[44537.501566] nvcsw: 4, nivcsw: 0
+[44537.501576] nvcsw: 4, nivcsw: 0
+[44537.501582] iterations: 4
+[44537.501591] iterations: 4
+[44537.501595] iterations: 4
+[44537.501599] thread: 1
+[44537.501607] iterations: 4
+[44537.501610] thread: 3
+[44537.501621] thread: 0
+[44537.501625] thread: 2
+[44537.590216] k_monitor module is being unloaded
+[44537.590296] lab 1 module body callback terminating
+[44537.591134] lab 1 module body callback terminating
+[44537.591257] lab 1 module body callback terminating
+[44537.591369] lab 1 module body callback terminating
+[44537.829128] k_monitor module initialized
+[44537.830048] lab 1 module body callback starting
+[44537.830054] lab 1 module body callback starting
+[44537.830067] lab 1 module body callback
+[44537.830085] lab 1 module body callback
+[44537.830098] nvcsw: 1, nivcsw: 0
+[44537.830114] iterations: 1
+[44537.830125] thread: 1
+[44537.830139] nvcsw: 1, nivcsw: 0
+[44537.830155] iterations: 1
+[44537.830169] thread: 0
+[44537.830180] lab 1 module body callback starting
+[44537.830187] lab 1 module body callback starting
+[44537.830200] lab 1 module body callback
+[44537.830218] lab 1 module body callback
+[44537.830232] nvcsw: 1, nivcsw: 0
+[44537.830244] nvcsw: 1, nivcsw: 0
+[44537.830254] iterations: 1
+[44537.830262] iterations: 1
+[44537.830274] thread: 3
+[44537.830277] thread: 2
+[44537.930175] lab 1 module timer callback
+[44537.930259] lab 1 module body callback
+[44537.930263] lab 1 module body callback
+[44537.930268] lab 1 module body callback
+[44537.930274] lab 1 module body callback
+[44537.930287] nvcsw: 2, nivcsw: 0
+[44537.930293] nvcsw: 2, nivcsw: 0
+[44537.930298] nvcsw: 2, nivcsw: 0
+[44537.930306] iterations: 2
+[44537.930310] iterations: 2
+[44537.930321] nvcsw: 2, nivcsw: 0
+[44537.930325] thread: 1
+[44537.930328] thread: 2
+[44537.930336] iterations: 2
+[44537.930350] iterations: 2
+[44537.930353] thread: 0
+[44537.930366] thread: 3
+[44538.030176] lab 1 module timer callback
+[44538.030254] lab 1 module body callback
+[44538.030259] lab 1 module body callback
+[44538.030264] lab 1 module body callback
+[44538.030269] lab 1 module body callback
+[44538.030281] nvcsw: 3, nivcsw: 0
+[44538.030287] nvcsw: 3, nivcsw: 0
+[44538.030293] nvcsw: 3, nivcsw: 0
+[44538.030302] iterations: 3
+[44538.030306] iterations: 3
+[44538.030314] iterations: 3
+[44538.030319] thread: 1
+[44538.030330] nvcsw: 3, nivcsw: 0
+[44538.030335] thread: 3
+[44538.030353] thread: 2
+[44538.030363] iterations: 3
+[44538.030379] thread: 0
+[44538.130180] lab 1 module timer callback
+[44538.130260] lab 1 module body callback
+[44538.130264] lab 1 module body callback
+[44538.130269] lab 1 module body callback
+[44538.130276] lab 1 module body callback
+[44538.130287] nvcsw: 4, nivcsw: 0
+[44538.130293] nvcsw: 4, nivcsw: 0
+[44538.130298] nvcsw: 4, nivcsw: 0
+[44538.130307] iterations: 4
+[44538.130311] iterations: 4
+[44538.130322] nvcsw: 4, nivcsw: 0
+[44538.130325] thread: 1
+[44538.130329] thread: 2
+[44538.130337] iterations: 4
+[44538.130350] iterations: 4
+[44538.130354] thread: 0
+[44538.130367] thread: 3
+[44538.224527] k_monitor module is being unloaded
+[44538.224609] lab 1 module body callback terminating
+[44538.224730] lab 1 module body callback terminating
+[44538.224844] lab 1 module body callback terminating
+[44538.224936] lab 1 module body callback terminating
