@@ -31,6 +31,7 @@ static int body_callback(void *data)
         set_current_state(TASK_INTERRUPTIBLE);
         schedule();
     }
+    printk(KERN_ALERT "lab 1 module body callback terminating");
     return 0;
 }
 
