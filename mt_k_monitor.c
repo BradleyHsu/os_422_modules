@@ -24,7 +24,6 @@ static ktime_t timer_interval;
 static struct hrtimer timer;
 static struct task_struct *task[NUM_THREADS] = {NULL}; 
 int return_value;
-int test;
 
 static int body_callback(void *data)
 {
