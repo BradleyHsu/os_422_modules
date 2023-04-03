@@ -39,6 +39,7 @@ static int body_callback(void *data)
 static enum hrtimer_restart timer_callback(struct hrtimer *timer)
 {
     printk(KERN_ALERT "lab 1 module timer callback");
+    wake_up_process(task);
     hrtimer_forward_now(timer, timer_interval);
     return HRTIMER_RESTART;
 }
@@ -72,7 +73,6 @@ k_monitor_exit(void)
     printk(KERN_ALERT "k_monitor module is being unloaded\n");
     hrtimer_cancel(&timer);
     kthread_stop(task);
-    wake_up_process(task);
 }
 
 module_init(k_monitor_init);
