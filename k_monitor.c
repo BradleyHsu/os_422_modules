@@ -27,23 +27,23 @@ int return_value;
 static int body_callback(void *data)
 {
     int iterations = 0; 
-    printk(KERN_ALERT "lab 1 module body callback starting");
+    printk(KERN_ALERT "lab 1 module body callback starting\n");
     do {
         iterations = iterations + 1;
-        printk(KERN_ALERT "lab 1 module body callback");
+        printk(KERN_ALERT "lab 1 module body callback\n");
         printk(KERN_DEBUG "nvcsw: %lu, nivcsw: %lu\n", current->nvcsw, current->nivcsw);
-        printk(KERN_DEBUG "iterations: %d", iterations);
+        printk(KERN_DEBUG "iterations: %d\n", iterations);
         set_current_state(TASK_INTERRUPTIBLE);
         schedule();
     } while(!kthread_should_stop());
-    printk(KERN_ALERT "lab 1 module body callback terminating");
+    printk(KERN_ALERT "lab 1 module body callback terminating\n");
     return 0;
 }
 
 //timer callback
 static enum hrtimer_restart timer_callback(struct hrtimer *timer)
 {
-    printk(KERN_ALERT "lab 1 module timer callback");
+    printk(KERN_ALERT "lab 1 module timer callback\n");
     wake_up_process(task);
     hrtimer_forward_now(timer, timer_interval);
     return HRTIMER_RESTART;
