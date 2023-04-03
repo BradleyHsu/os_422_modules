@@ -11,6 +11,7 @@
 #include <linux/sched.h>
 #include <linux/kthread.h>
 
+
 //params
 static ulong log_sec = 1;
 static ulong log_nsec = 0;
@@ -19,10 +20,10 @@ module_param(log_sec, ulong, 0);
 module_param(log_nsec, ulong, 0);
 
 //static vars
-static int NUM_THREADS = 4;
+#define NUM_THREADS 4
 static ktime_t timer_interval; 
 static struct hrtimer timer;
-static struct task_struct *task[NUM_THREADS] = {NULL}; 
+static struct task_struct *task[NUM_THREADS]; 
 int thread;
 
 static int body_callback(void *data)
