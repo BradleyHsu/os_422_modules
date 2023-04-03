@@ -22,15 +22,20 @@ module_param(log_nsec, ulong, 0);
 static ktime_t timer_interval; 
 static struct hrtimer timer;
 static struct task_struct *task = NULL;
+int return_value;
 
 static int body_callback(void *data)
 {
-    while(!kthread_should_stop())
-    {
+    int iterations = 0; 
+    printk(KERN_ALERT "lab 1 module body callback starting");
+    do {
+        iterations = iterations + 1;
         printk(KERN_ALERT "lab 1 module body callback");
+        printk(KERN_DEBUG "nvcsw: %lu, nivcsw: %lu\n", current->nvcsw, current->nivcsw);
+        printk(KERN_DEBUG "iterations: %d", iterations);
         set_current_state(TASK_INTERRUPTIBLE);
         schedule();
-    }
+    } while(!kthread_should_stop());
     printk(KERN_ALERT "lab 1 module body callback terminating");
     return 0;
 }
@@ -39,6 +44,7 @@ static int body_callback(void *data)
 static enum hrtimer_restart timer_callback(struct hrtimer *timer)
 {
     printk(KERN_ALERT "lab 1 module timer callback");
+    wake_up_process(task);
     hrtimer_forward_now(timer, timer_interval);
     return HRTIMER_RESTART;
 }
@@ -70,9 +76,8 @@ static void
 k_monitor_exit(void)
 {
     printk(KERN_ALERT "k_monitor module is being unloaded\n");
+    return_value = kthread_stop(task);
     hrtimer_cancel(&timer);
-    kthread_stop(task);
-    wake_up_process(task);
 }
 
 module_init(k_monitor_init);
