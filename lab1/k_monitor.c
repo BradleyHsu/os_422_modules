@@ -27,15 +27,15 @@ int return_value;
 static int body_callback(void *data)
 {
     int iterations = 0; 
-    while(!kthread_should_stop())
-    {
+    printk(KERN_ALERT "lab 1 module body callback starting");
+    do {
         iterations = iterations + 1;
         printk(KERN_ALERT "lab 1 module body callback");
         printk(KERN_DEBUG "nvcsw: %lu, nivcsw: %lu\n", current->nvcsw, current->nivcsw);
         printk(KERN_DEBUG "iterations: %d", iterations);
         set_current_state(TASK_INTERRUPTIBLE);
         schedule();
-    }
+    } while(!kthread_should_stop());
     printk(KERN_ALERT "lab 1 module body callback terminating");
     return 0;
 }
