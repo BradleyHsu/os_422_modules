@@ -23,7 +23,7 @@ static int NUM_THREADS = 4;
 static ktime_t timer_interval; 
 static struct hrtimer timer;
 static struct task_struct *task[NUM_THREADS] = {NULL}; 
-int return_value;
+int thread;
 
 static int body_callback(void *data)
 {
@@ -46,7 +46,7 @@ static int body_callback(void *data)
 static enum hrtimer_restart timer_callback(struct hrtimer *timer)
 {
     printk(KERN_ALERT "lab 1 module timer callback");
-    for (int thread = 0; thread < NUM_THREADS; thread++)
+    for (thread = 0; thread < NUM_THREADS; thread++)
     {
         wake_up_process(task[thread]);
     }
@@ -61,7 +61,7 @@ k_monitor_init(void)
 {
     printk(KERN_ALERT "k_monitor module initialized\n");
     
-    for(int thread = 0; thread < NUM_THREADS; thread++) {
+    for(thread = 0; thread < NUM_THREADS; thread++) {
         task[thread] = kthread_create(body_callback, NULL, "k_monitor");
         if(IS_ERR(task[thread]))
         {
@@ -71,10 +71,10 @@ k_monitor_init(void)
         }
     }
 
-    for (int thread = 0; thread < NUM_THREADS; thread++) {
+    for (thread = 0; thread < NUM_THREADS; thread++) {
         kthread_bind(task[thread], thread);
     }   
-    for (int thread = 0; thread < NUM_THREADS; thread++) {
+    for (thread = 0; thread < NUM_THREADS; thread++) {
         wake_up_process(task[thread]);
     }
 
@@ -90,7 +90,7 @@ static void
 k_monitor_exit(void)
 {
     printk(KERN_ALERT "k_monitor module is being unloaded\n");
-    for (int thread = 0; thread < NUM_THREADS; thread++) {
+    for (thread = 0; thread < NUM_THREADS; thread++) {
         kthread_stop(task[thread]);
     }
     hrtimer_cancel(&timer);
