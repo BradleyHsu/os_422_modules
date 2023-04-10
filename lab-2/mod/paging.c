@@ -66,16 +66,12 @@ void free_vma_private(struct vm_area_struct *vma) {
 
 void free_vma_pages(struct vma_private *vma_priv) {
     int page;
-    printk(KERN_INFO "Freeing all in free_vma_pages()\n");
     for (page = 0; page < vma_priv->num_pages; page++) {
         if (vma_priv->pages[page] == NULL) {
             printk(KERN_ERR "Page is null\n");
         }
-        printk(KERN_INFO "Freeing page %d\n", page);
         __free_pages(vma_priv->pages[page], 0);
-        printk(KERN_INFO "Freeing page %d: after freeing page\n", page);
         increment_free_count();
-        printk(KERN_INFO "Freeing page %d: after incrementing free count\n", page);
     }
 }
 
@@ -83,11 +79,8 @@ void handle_close(struct vm_area_struct *vma) {
     //free all pages
     struct vma_private *vma_priv = get_vma_private(vma);
     int references = decrement_ref_count(vma_priv);
-    printk(KERN_INFO "References: %d", references);
     if (references == 0) {
-        printk(KERN_INFO "Freeing all pages\n");
         free_vma_pages(vma_priv);
-        printk(KERN_INFO "Freeing vma private\n");
         free_vma_private(vma);
     }
 }
@@ -95,20 +88,17 @@ void handle_close(struct vm_area_struct *vma) {
 void append_new_address(struct vm_area_struct *vma, struct page *page) {
     struct vma_private *vma_priv;
     unsigned long flags;
-    printk(KERN_INFO "Appending new address\n");
+
     vma_priv = get_vma_private(vma);
-    printk(KERN_INFO "getting spin lock:\n");
+
     spin_lock_irqsave(&vma_priv->pages_lock, flags);
-    printk(KERN_INFO "Appending new address: %d\n", vma_priv->num_pages);
     vma_priv->pages[vma_priv->num_pages] = page;
     vma_priv->num_pages++;
-    printk(KERN_INFO "Restoring spin lock\n");
     spin_unlock_irqrestore(&vma_priv->pages_lock, flags);
-    printk(KERN_INFO "Appending new address: after adding to page\n");
+
     if (vma_priv->num_pages == 500) {
         printk(KERN_ERR "Too many pages");
     }
-    printk(KERN_INFO "Appending new address: after checking if need to allocate more space\n");
 }
 
 static int
