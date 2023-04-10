@@ -82,13 +82,18 @@ void handle_close(struct vm_area_struct *vma) {
 }
 
 void append_new_address(struct vm_area_struct *vma, struct page *page) {
+    printk(KERN_INFO "Appending new address\n")
     struct vma_private *vma_priv = get_vma_private(vma);
+    printk(KERN_INFO "Appending new address:\n");
+    printk(KERN_INFO "Appending new address: %d\n", vma_priv->num_pages);
     vma_priv->pages[vma_priv->num_pages] = page;
     vma_priv->num_pages++;
+    printk(KERN_INFO "Appending new address: after adding to page\n");
     if (sizeof(vma_priv->pages) / sizeof(vma_priv->pages[0]) == vma_priv->num_pages) {
         //need to allocate more space
         printk(KERN_INFO "Need to allocate more space for pages\n");
     }
+    printk(KERN_INFO "Appending new address: after checking if need to allocate more space\n");
 }
 
 static int
