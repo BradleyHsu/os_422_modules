@@ -97,6 +97,7 @@ void append_new_address(struct vm_area_struct *vma, struct page *page) {
     vma_priv->pages[vma_priv->num_pages] = page;
     vma_priv->num_pages++;
     printk(KERN_INFO "Appending new address: after adding to page\n");
+    printk(KERN_INFO "maximum number of pages: %d\n", sizeof(vma_priv->pages) / sizeof(vma_priv->pages[0]));
     if (sizeof(vma_priv->pages) / sizeof(vma_priv->pages[0]) == vma_priv->num_pages) {
         //need to allocate more space
         printk(KERN_INFO "Need to allocate more space for pages\n");
@@ -217,7 +218,7 @@ kmod_paging_init(void)
         return status;
     }
 
-    printk(KERN_INFO "Loaded kmod_paging module v5\n");
+    printk(KERN_INFO "Loaded kmod_paging module v6\n");
 
     return 0;
 }
