@@ -47,7 +47,7 @@ struct vma_private* alloc_vma_private(struct vm_area_struct *vma, int num_pages)
     if (vma_priv == NULL) {
         return NULL;
     }
-    vma_priv->ref_count = 1;
+    vma_priv->ref_count = ATOMIC_INIT(1);
     vma->vm_private_data = vma_priv;
     return vma_priv;
 }
@@ -56,8 +56,9 @@ void free_vma_private(struct vm_area_struct *vma) {
     kfree(vma->vm_private_data);
 }
 
-void free_pages(struct vma_private *vma_priv) {
-    for (int page = 0; page < vma_priv->num_pages; page++) {
+void free_vma_pages(struct vma_private *vma_priv) {
+    int page;
+    for (page = 0; page < vma_priv->num_pages; page++) {
         __free_pages(vma_priv->pages[page], 0);
         increment_free_count();
     }
@@ -67,12 +68,12 @@ void handle_close(struct vm_area_struct *vma) {
     //free all pages
     struct vma_private *vma_priv = get_vma_private(vma);
     if (decrement_ref_count(vma_priv) == 0) {
-        free_pages(vma_priv);
+        free_vma_pages(vma_priv);
         free_vma_private(vma);
     }
 }
 
-append_new_address(struct vm_area_struct *vma, struct page *page) {
+void append_new_address(struct vm_area_struct *vma, struct page *page) {
     struct vma_private *vma_priv = get_vma_private(vma);
     vma_priv->pages[vma_priv->num_pages] = page;
     vma_priv->num_pages++;
@@ -200,7 +201,7 @@ kmod_paging_exit(void)
     misc_deregister(&dev_handle);
 
     printk(KERN_INFO "Unloaded kmod_paging module\n");
-    printk(KERN_INFO "Allocated %d pages, freed %d pages\n", alloc_count, free_count);
+    printk(KERN_INFO "Allocated %d pages, freed %d pages\n", atomic_read(&alloc_count), atomic_read(&free_count));
 }
 
 module_init(kmod_paging_init);
