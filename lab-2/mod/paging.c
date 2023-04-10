@@ -19,8 +19,10 @@ static atomic_t free_count = ATOMIC_INIT(0);
 struct vma_private {
     atomic_t ref_count;
     int num_pages;
-    struct page *pages[0];
+    spinlock_t pages_lock;
+    struct page *pages[500];
 };
+
 
 void increment_alloc_count(void) {
     atomic_inc(&alloc_count);
@@ -42,16 +44,18 @@ struct vma_private* get_vma_private(struct vm_area_struct *vma) {
     return (struct vma_private *)vma->vm_private_data;
 }
 
-struct vma_private* alloc_vma_private(struct vm_area_struct *vma, int num_pages) {
-    int size = sizeof(struct vma_private) + num_pages * sizeof(struct page *);
+struct vma_private* alloc_vma_private(struct vm_area_struct *vma) {
+    int size = sizeof(struct vma_private);
     struct vma_private *vma_priv = kmalloc(size, GFP_KERNEL);
     atomic_t *ref_count;
     if (vma_priv == NULL) {
+        printk(KERN_ERR "Could not allocate vma_priv");
         return NULL;
     }
     memset(vma_priv, 0, size);
     ref_count = &vma_priv->ref_count;
     atomic_set(ref_count, 1);
+    spin_lock_init(&vma_priv->pages_lock);
     vma->vm_private_data = vma_priv;
     return vma_priv;
 }
@@ -90,17 +94,19 @@ void handle_close(struct vm_area_struct *vma) {
 
 void append_new_address(struct vm_area_struct *vma, struct page *page) {
     struct vma_private *vma_priv;
+    unsigned long flags;
     printk(KERN_INFO "Appending new address\n");
     vma_priv = get_vma_private(vma);
-    printk(KERN_INFO "Appending new address:\n");
+    printk(KERN_INFO "getting spin lock:\n");
+    spin_lock_irqsave(&vma_priv->pages_lock, flags);
     printk(KERN_INFO "Appending new address: %d\n", vma_priv->num_pages);
     vma_priv->pages[vma_priv->num_pages] = page;
     vma_priv->num_pages++;
+    printk(KERN_INFO "Restoring spin lock\n");
+    spin_unlock_irqrestore(&vma_priv->pages_lock, flags);
     printk(KERN_INFO "Appending new address: after adding to page\n");
-    printk(KERN_INFO "maximum number of pages: %d\n", sizeof(vma_priv->pages) / sizeof(vma_priv->pages[0]));
-    if (sizeof(vma_priv->pages) / sizeof(vma_priv->pages[0]) == vma_priv->num_pages) {
-        //need to allocate more space
-        printk(KERN_INFO "Need to allocate more space for pages\n");
+    if (vma_priv->num_pages == 500) {
+        printk(KERN_ERR "Too many pages");
     }
     printk(KERN_INFO "Appending new address: after checking if need to allocate more space\n");
 }
@@ -147,7 +153,7 @@ static void
 paging_vma_open(struct vm_area_struct * vma)
 {
     printk(KERN_INFO "paging_vma_open() invoked\n");
-    alloc_vma_private(vma, 1);
+    alloc_vma_private(vma);
 }
 
 static void
@@ -180,7 +186,7 @@ paging_mmap(struct file           * filp,
     vma->vm_ops = &paging_vma_ops;
 
     if (get_vma_private(vma) == NULL) {
-        alloc_vma_private(vma, 1);
+        alloc_vma_private(vma);
     } 
 
     printk(KERN_INFO "paging_mmap() invoked: new VMA for pid %d from VA 0x%lx to 0x%lx\n",
@@ -218,7 +224,7 @@ kmod_paging_init(void)
         return status;
     }
 
-    printk(KERN_INFO "Loaded kmod_paging module v6\n");
+    printk(KERN_INFO "Loaded kmod_paging module v7\n");
 
     return 0;
 }
