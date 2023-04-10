@@ -1,5 +1,5 @@
 # TODO: Change this to the location of your kernel source code
-KERNEL_SOURCE=/project/scratch01/compiling/james.orr/linux_source/linux/
+KERNEL_SOURCE=/project/scratch01/compile/b.hsu/linux_source/linux/
 
 INCLUDE_DIR=$(PWD)/../include
 EXTRA_CFLAGS += -DMODULE=1 -D__KERNEL__=1 -I$(INCLUDE_DIR)
