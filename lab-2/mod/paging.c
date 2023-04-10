@@ -13,8 +13,10 @@
 #include <paging.h>
 
 static atomic_t alloc_count = ATOMIC_INIT(0);
-
 static atomic_t free_count = ATOMIC_INIT(0);
+static unsigned int demand_paging = 1;
+module_param(demand_paging, uint, 0644);
+
 
 struct vma_private {
     atomic_t ref_count;
@@ -101,14 +103,9 @@ void append_new_address(struct vm_area_struct *vma, struct page *page) {
     }
 }
 
-static int
-do_fault(struct vm_area_struct * vma,
-         unsigned long           fault_address)
-{
+static int alloc_vma_page(struct vm_area_struct *vma, unsigned long fault_address) {
     struct page *new_page;
     int err;
-    printk(KERN_INFO "paging_vma_fault() invoked: took a page fault at VA 0x%lx\n", fault_address);
-
     new_page = alloc_page(GFP_KERNEL);
     if (new_page == NULL) {
         printk(KERN_ERR "Failed to allocate page");
@@ -126,8 +123,14 @@ do_fault(struct vm_area_struct * vma,
 
     increment_alloc_count();
     printk(KERN_INFO "paging_vma_fault() success: took a page fault at VA 0x%lx\n", fault_address);
-
     return VM_FAULT_NOPAGE;
+}
+static int
+do_fault(struct vm_area_struct * vma,
+         unsigned long           fault_address)
+{
+    int err = alloc_vma_page(vma, fault_address);
+    return err;
 }
 
 static vm_fault_t
@@ -161,6 +164,24 @@ paging_vma_ops =
     .close = paging_vma_close
 };
 
+int allocate_pages_for_vma(struct vm_area_struct *vma) {
+    unsigned long addr;
+    int err = VM_FAULT_NOPAGE;
+
+    // Iterate through the virtual address range
+    for (addr = vma->vm_start; addr < vma->vm_end; addr += PAGE_SIZE) {
+        struct page *new_page;
+
+        // Allocate a page
+        err = alloc_vma_page(vma, addr);
+        if (err != VM_FAULT_NOPAGE) {
+            break;
+        }
+    }
+
+    return err;
+}
+
 /* vma is the new virtual address segment for the process */
 static int
 paging_mmap(struct file           * filp,
@@ -182,6 +203,12 @@ paging_mmap(struct file           * filp,
     printk(KERN_INFO "paging_mmap() invoked: new VMA for pid %d from VA 0x%lx to 0x%lx\n",
         current->pid, vma->vm_start, vma->vm_end);
 
+    if (!demand_paging) {
+        if (allocate_pages_for_vma(vma) != VM_FAULT_NOPAGE) {
+            printk(KERN_ERR "Failed to allocate pages for VMA");
+            return -ENOMEM;
+        }
+    }
     return 0;
 }
 
@@ -214,7 +241,7 @@ kmod_paging_init(void)
         return status;
     }
 
-    printk(KERN_INFO "Loaded kmod_paging module v7\n");
+    printk(KERN_INFO "Loaded kmod_paging module v8\n");
 
     return 0;
 }
