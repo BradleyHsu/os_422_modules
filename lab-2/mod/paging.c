@@ -61,7 +61,7 @@ void free_vma_private(struct vm_area_struct *vma) {
 void free_vma_pages(struct vma_private *vma_priv) {
     int page;
     for (page = 0; page < vma_priv->num_pages; page++) {
-        if (pages[page] == NULL) {
+        if (vma_priv->pages[page] == NULL) {
             printk(KERN_ERR "Page is null\n");
         }
         __free_pages(vma_priv->pages[page], 0);
