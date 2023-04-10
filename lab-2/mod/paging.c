@@ -204,7 +204,7 @@ kmod_paging_init(void)
         return status;
     }
 
-    printk(KERN_INFO "Loaded kmod_paging module v1\n");
+    printk(KERN_INFO "Loaded kmod_paging module v2\n");
 
     return 0;
 }
