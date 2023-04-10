@@ -61,6 +61,9 @@ void free_vma_private(struct vm_area_struct *vma) {
 void free_vma_pages(struct vma_private *vma_priv) {
     int page;
     for (page = 0; page < vma_priv->num_pages; page++) {
+        if (pages[page] == NULL) {
+            printk(KERN_ERR "Page is null\n");
+        }
         __free_pages(vma_priv->pages[page], 0);
         increment_free_count();
     }
@@ -69,7 +72,10 @@ void free_vma_pages(struct vma_private *vma_priv) {
 void handle_close(struct vm_area_struct *vma) {
     //free all pages
     struct vma_private *vma_priv = get_vma_private(vma);
-    if (decrement_ref_count(vma_priv) == 0) {
+    int references = decrement_ref_count(vma_priv);
+    printk(KERN_INFO "References: %d");
+    if (references == 0) {
+        printk(KERN_INFO "Freeing all pages\n");
         free_vma_pages(vma_priv);
         free_vma_private(vma);
     }
