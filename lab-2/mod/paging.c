@@ -60,12 +60,16 @@ void free_vma_private(struct vm_area_struct *vma) {
 
 void free_vma_pages(struct vma_private *vma_priv) {
     int page;
+    printk(KERN_INFO "Freeing all in free_vma_pages()\n");
     for (page = 0; page < vma_priv->num_pages; page++) {
         if (vma_priv->pages[page] == NULL) {
             printk(KERN_ERR "Page is null\n");
         }
+        printk(KERN_INFO "Freeing page %d\n", page);
         __free_pages(vma_priv->pages[page], 0);
+        printk(KERN_INFO "Freeing page %d: after freeing page\n", page);
         increment_free_count();
+        printk(KERN_INFO "Freeing page %d: after incrementing free count\n", page);
     }
 }
 
@@ -77,6 +81,7 @@ void handle_close(struct vm_area_struct *vma) {
     if (references == 0) {
         printk(KERN_INFO "Freeing all pages\n");
         free_vma_pages(vma_priv);
+        printk(KERN_INFO "Freeing vma private\n");
         free_vma_private(vma);
     }
 }
@@ -210,7 +215,7 @@ kmod_paging_init(void)
         return status;
     }
 
-    printk(KERN_INFO "Loaded kmod_paging module v3\n");
+    printk(KERN_INFO "Loaded kmod_paging module v4\n");
 
     return 0;
 }
