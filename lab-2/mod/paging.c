@@ -245,7 +245,7 @@ kmod_paging_init(void)
         return status;
     }
 
-    printk(KERN_INFO "Loaded kmod_paging module v8\n");
+    printk(KERN_INFO "Loaded kmod_paging module v9 with demand paging value %d\n", demand_paging);
 
     return 0;
 }
