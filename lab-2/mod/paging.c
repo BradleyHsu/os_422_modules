@@ -20,7 +20,7 @@ struct vma_private {
     atomic_t ref_count;
     int num_pages;
     struct page *pages[0];
-}
+};
 
 void increment_alloc_count(void) {
     atomic_inc(&alloc_count);
