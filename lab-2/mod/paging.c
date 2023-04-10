@@ -220,7 +220,7 @@ paging_mmap(struct file           * filp,
     if (!demand_paging) {
         printk(KERN_INFO "demand paging invoked: allocating pages for VMA\n");
         err = allocate_pages_for_vma(vma);
-        if (allocate_pages_for_vma(vma) != VM_FAULT_NOPAGE) {
+        if (err != VM_FAULT_NOPAGE) {
             printk(KERN_ERR "Failed to allocate pages for VMA\n");
         }
         printk(KERN_INFO "demand paging invoked: done allocating pages for VMA\n");
