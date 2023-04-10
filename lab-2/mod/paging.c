@@ -104,9 +104,9 @@ void append_new_address(struct vm_area_struct *vma, struct page *page) {
 }
 
 static int alloc_vma_page(struct vm_area_struct *vma, unsigned long fault_address) {
-    printk(KERN_INFO "alloc_vma_page() invoked\n");
     struct page *new_page;
     int err;
+    printk(KERN_INFO "alloc_vma_page() invoked\n");
     new_page = alloc_page(GFP_KERNEL);
     printk(KERN_INFO "alloc_page() returned 0x%p", new_page);
     if (new_page == NULL) {
@@ -143,10 +143,9 @@ do_fault(struct vm_area_struct * vma,
 static vm_fault_t
 paging_vma_fault(struct vm_fault * vmf)
 {
-    printk(KERN_INFO "paging_vma_fault() invoked\n");
     struct vm_area_struct * vma = vmf->vma;
     unsigned long fault_address = (unsigned long)vmf->address;
-
+    printk(KERN_INFO "paging_vma_fault() invoked\n");
     return do_fault(vma, fault_address);
 }
 
