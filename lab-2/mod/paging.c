@@ -109,6 +109,7 @@ do_fault(struct vm_area_struct * vma,
     }
 
     increment_alloc_count();
+    printk(KERN_INFO "paging_vma_fault() success: took a page fault at VA 0x%lx\n", fault_address);
 
     return VM_FAULT_NOPAGE;
 }
