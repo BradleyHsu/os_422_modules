@@ -104,9 +104,11 @@ void append_new_address(struct vm_area_struct *vma, struct page *page) {
 }
 
 static int alloc_vma_page(struct vm_area_struct *vma, unsigned long fault_address) {
+    printk(KERN_INFO "alloc_vma_page() invoked\n");
     struct page *new_page;
     int err;
     new_page = alloc_page(GFP_KERNEL);
+    printk(KERN_INFO "alloc_page() returned 0x%p", new_page);
     if (new_page == NULL) {
         printk(KERN_ERR "Failed to allocate page");
         return VM_FAULT_OOM;
@@ -114,12 +116,16 @@ static int alloc_vma_page(struct vm_area_struct *vma, unsigned long fault_addres
 
     append_new_address(vma, new_page);
 
+    printk(KERN_INFO "remap_pfn_range() invoked\n");
+
     err = remap_pfn_range(vma, PAGE_ALIGN(fault_address), page_to_pfn(new_page), PAGE_SIZE, vma->vm_page_prot);
     if (err != 0) {
         printk(KERN_ERR "Failed to remap page to VMA");
         __free_pages(new_page, 0);
         return VM_FAULT_SIGBUS;
     }
+
+    printk(KERN_INFO "remap_pfn_range() success\n");
 
     increment_alloc_count();
     printk(KERN_INFO "successfully allocated page at 0x%lx\n", fault_address);
@@ -137,6 +143,7 @@ do_fault(struct vm_area_struct * vma,
 static vm_fault_t
 paging_vma_fault(struct vm_fault * vmf)
 {
+    printk(KERN_INFO "paging_vma_fault() invoked\n");
     struct vm_area_struct * vma = vmf->vma;
     unsigned long fault_address = (unsigned long)vmf->address;
 
@@ -251,7 +258,7 @@ kmod_paging_init(void)
         return status;
     }
 
-    printk(KERN_INFO "Loaded kmod_paging module v9 with demand paging value %d\n", demand_paging);
+    printk(KERN_INFO "Loaded kmod_paging module v10 with demand paging value %d\n", demand_paging);
 
     return 0;
 }
