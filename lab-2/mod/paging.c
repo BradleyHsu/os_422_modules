@@ -43,11 +43,13 @@ struct vma_private* get_vma_private(struct vm_area_struct *vma) {
 }
 
 struct vma_private* alloc_vma_private(struct vm_area_struct *vma, int num_pages) {
-    struct vma_private *vma_priv = kmalloc(sizeof(struct vma_private) + num_pages * sizeof(struct page *), GFP_KERNEL);
+    int size = sizeof(struct vma_private) + num_pages * sizeof(struct page *);
+    struct vma_private *vma_priv = kmalloc(size, GFP_KERNEL);
     atomic_t *ref_count;
     if (vma_priv == NULL) {
         return NULL;
     }
+    memset(vma_priv, 0, size);
     ref_count = &vma_priv->ref_count;
     atomic_set(ref_count, 1);
     vma->vm_private_data = vma_priv;
