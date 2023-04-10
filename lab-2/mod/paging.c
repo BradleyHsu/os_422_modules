@@ -73,7 +73,7 @@ void handle_close(struct vm_area_struct *vma) {
     //free all pages
     struct vma_private *vma_priv = get_vma_private(vma);
     int references = decrement_ref_count(vma_priv);
-    printk(KERN_INFO "References: %d");
+    printk(KERN_INFO "References: %d", references);
     if (references == 0) {
         printk(KERN_INFO "Freeing all pages\n");
         free_vma_pages(vma_priv);
