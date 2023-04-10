@@ -185,6 +185,12 @@ static int
 paging_mmap(struct file           * filp,
             struct vm_area_struct * vma)
 {
+    int err;
+    if (!demand_paging) {
+        err = VM_FAULT_NOPAGE;
+    } else {
+        err = 0;
+    }
     /* prevent Linux from mucking with our VMA (expanding it, merging it 
      * with other VMAs, etc.)
      */
@@ -202,12 +208,12 @@ paging_mmap(struct file           * filp,
         current->pid, vma->vm_start, vma->vm_end);
 
     if (!demand_paging) {
+        err = allocate_pages_for_vma(vma);
         if (allocate_pages_for_vma(vma) != VM_FAULT_NOPAGE) {
             printk(KERN_ERR "Failed to allocate pages for VMA");
-            return -ENOMEM;
         }
     }
-    return 0;
+    return err;
 }
 
 static struct file_operations
