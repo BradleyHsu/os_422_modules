@@ -122,7 +122,7 @@ static int alloc_vma_page(struct vm_area_struct *vma, unsigned long fault_addres
     }
 
     increment_alloc_count();
-    printk(KERN_INFO "paging_vma_fault() success: took a page fault at VA 0x%lx\n", fault_address);
+    printk(KERN_INFO "successfully allocated page at 0x%lx\n", fault_address);
     return VM_FAULT_NOPAGE;
 }
 static int
@@ -130,6 +130,7 @@ do_fault(struct vm_area_struct * vma,
          unsigned long           fault_address)
 {
     int err = alloc_vma_page(vma, fault_address);
+    printk(KERN_INFO "paging_vma_fault() success: took a page fault at VA 0x%lx\n", fault_address);
     return err;
 }
 
@@ -167,15 +168,18 @@ paging_vma_ops =
 int allocate_pages_for_vma(struct vm_area_struct *vma) {
     unsigned long addr;
     int err = VM_FAULT_NOPAGE;
-
+    printk(KERN_INFO "allocate_pages_for_vma()\n");
     // Iterate through the virtual address range
     for (addr = vma->vm_start; addr < vma->vm_end; addr += PAGE_SIZE) {
-        // Allocate a page
+        printk(KERN_INFO "allocate_pages_for_vma() addr: 0x%lx\n", addr);
         err = alloc_vma_page(vma, addr);
         if (err != VM_FAULT_NOPAGE) {
             break;
         }
+        printk(KERN_INFO "successfully allocated page at 0x%lx\n", addr);
     }
+
+    printk(KERN_INFO "allocate_pages_for_vma() done\n");
 
     return err;
 }
@@ -208,10 +212,12 @@ paging_mmap(struct file           * filp,
         current->pid, vma->vm_start, vma->vm_end);
 
     if (!demand_paging) {
+        printk(KERN_INFO "demand paging invoked: allocating pages for VMA\n");
         err = allocate_pages_for_vma(vma);
         if (allocate_pages_for_vma(vma) != VM_FAULT_NOPAGE) {
-            printk(KERN_ERR "Failed to allocate pages for VMA");
+            printk(KERN_ERR "Failed to allocate pages for VMA\n");
         }
+        printk(KERN_INFO "demand paging invoked: done allocating pages for VMA\n");
     }
     return err;
 }
