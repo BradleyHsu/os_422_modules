@@ -170,8 +170,6 @@ int allocate_pages_for_vma(struct vm_area_struct *vma) {
 
     // Iterate through the virtual address range
     for (addr = vma->vm_start; addr < vma->vm_end; addr += PAGE_SIZE) {
-        struct page *new_page;
-
         // Allocate a page
         err = alloc_vma_page(vma, addr);
         if (err != VM_FAULT_NOPAGE) {
