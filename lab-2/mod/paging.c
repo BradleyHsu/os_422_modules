@@ -38,11 +38,11 @@ int decrement_ref_count(struct vma_private *vma_priv) {
     return atomic_dec_return(&vma_priv->ref_count);
 }
 
-vma_private* get_vma_private(struct vm_area_struct *vma) {
+struct vma_private* get_vma_private(struct vm_area_struct *vma) {
     return (struct vma_private *)vma->vm_private_data;
 }
 
-vma_private* alloc_vma_private(struct vm_area_struct *vma, int num_pages) {
+struct vma_private* alloc_vma_private(struct vm_area_struct *vma, int num_pages) {
     struct vma_private *vma_priv = kmalloc(sizeof(struct vma_private) + num_pages * sizeof(struct page *), GFP_KERNEL);
     if (vma_priv == NULL) {
         return NULL;
