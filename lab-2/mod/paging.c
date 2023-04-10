@@ -79,6 +79,10 @@ void append_new_address(struct vm_area_struct *vma, struct page *page) {
     struct vma_private *vma_priv = get_vma_private(vma);
     vma_priv->pages[vma_priv->num_pages] = page;
     vma_priv->num_pages++;
+    if (sizeof(vma_priv->pages) / sizeof(vma_priv->pages[0]) == vma_priv->num_pages) {
+        //need to allocate more space
+        printk(KERN_INFO "Need to allocate more space for pages\n");
+    }
 }
 
 static int
@@ -94,15 +98,17 @@ do_fault(struct vm_area_struct * vma,
         printk(KERN_ERR "Failed to allocate page");
         return VM_FAULT_OOM;
     }
-    increment_alloc_count();
 
     append_new_address(vma, new_page);
 
     err = remap_pfn_range(vma, PAGE_ALIGN(fault_address), page_to_pfn(new_page), PAGE_SIZE, vma->vm_page_prot);
     if (err != 0) {
         printk(KERN_ERR "Failed to remap page to VMA");
+        __free_pages(new_page, 0);
         return VM_FAULT_SIGBUS;
     }
+
+    increment_alloc_count();
 
     return VM_FAULT_NOPAGE;
 }
