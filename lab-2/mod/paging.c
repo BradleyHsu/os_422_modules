@@ -82,8 +82,9 @@ void handle_close(struct vm_area_struct *vma) {
 }
 
 void append_new_address(struct vm_area_struct *vma, struct page *page) {
+    struct vma_private *vma_priv;
     printk(KERN_INFO "Appending new address\n");
-    struct vma_private *vma_priv = get_vma_private(vma);
+    vma_priv = get_vma_private(vma);
     printk(KERN_INFO "Appending new address:\n");
     printk(KERN_INFO "Appending new address: %d\n", vma_priv->num_pages);
     vma_priv->pages[vma_priv->num_pages] = page;
