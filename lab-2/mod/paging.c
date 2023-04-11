@@ -107,7 +107,7 @@ static int alloc_vma_page(struct vm_area_struct *vma, unsigned long fault_addres
     struct page *new_page;
     int err;
     pgprot_t prot = vma->vm_page_prot;
-    pgprot_val(prot) |= _PAGE_RW;
+    vm_get_page_prot(prot | VM_READ | VM_WRITE);
     printk(KERN_INFO "alloc_vma_page() invoked\n");
     new_page = alloc_page(GFP_KERNEL);
     printk(KERN_INFO "alloc_page() returned 0x%p", new_page);
