@@ -106,6 +106,8 @@ void append_new_address(struct vm_area_struct *vma, struct page *page) {
 static int alloc_vma_page(struct vm_area_struct *vma, unsigned long fault_address) {
     struct page *new_page;
     int err;
+    pgprot_t prot = vma->vm_page_prot;
+    pgprot_val(prot) |= _PAGE_RW;
     printk(KERN_INFO "alloc_vma_page() invoked\n");
     new_page = alloc_page(GFP_KERNEL);
     printk(KERN_INFO "alloc_page() returned 0x%p", new_page);
@@ -118,7 +120,7 @@ static int alloc_vma_page(struct vm_area_struct *vma, unsigned long fault_addres
 
     printk(KERN_INFO "remap_pfn_range() invoked\n");
 
-    err = remap_pfn_range(vma, PAGE_ALIGN(fault_address), page_to_pfn(new_page), PAGE_SIZE, vma->vm_page_prot);
+    err = remap_pfn_range(vma, PAGE_ALIGN(fault_address), page_to_pfn(new_page), PAGE_SIZE, prot);
     if (err != 0) {
         printk(KERN_ERR "Failed to remap page to VMA");
         __free_pages(new_page, 0);
