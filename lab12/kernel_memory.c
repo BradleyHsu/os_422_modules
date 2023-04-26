@@ -86,7 +86,7 @@ thread_fn(void * data)
         unsigned long cur_page = (unsigned long) p_addr + i*PAGE_SIZE;
         for (j = 0; j < nr_structs_per_page; j++) {
             unsigned long cur_struct = cur_page + (j * sizeof(datatype));
-            datatype_t * this_struct = (struct datatype_t *) __va(cur_struct)
+            datatype * this_struct = (struct datatype_t *) __va(cur_struct)
             for (k = 0; k < ARR_SIZE; k++) {
                 this_struct->array[k] = i*nr_structs_per_page*ARR_SIZE + j*ARR_SIZE + k;
                 if ((i == 0) && (j == 0)) {
