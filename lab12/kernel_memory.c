@@ -23,6 +23,10 @@ typedef struct datatype_t {
    unsigned int array[ARR_SIZE];
 } datatype;
 
+unsigned int nr_pages;
+unsigned int nr_structs_per_page;
+unsigned int order;
+
 static unsigned int
 my_get_order(unsigned int value)
 {
@@ -51,6 +55,14 @@ thread_fn(void * data)
     while (!kthread_should_stop()) {
         schedule();
     }
+
+    nr_structs_per_page = PAGE_SIZE/sizeof(datatype);
+    nr_pages = nr_structs/nr_structs_per_page;
+    if (nr_structs % nr_structs_per_page != 0) {
+        nr_pages++;
+    }
+    order = my_get_order(nr_pages);
+    printk(KERN_INFO "nr_pages %u, nr_structs_per_page %u, order %u\n", nr_pages, nr_structs_per_page, order);
 
     return 0;
 }
