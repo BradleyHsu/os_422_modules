@@ -47,6 +47,7 @@ thread_fn(void * data)
 {
     printk("Hello from thread %s. nr_structs=%u\n", current->comm, nr_structs);
 
+    printk(KERN_INFO "Page size: %lu\n, datatype struct size %u, num structs per page %lu\n", PAGE_SIZE, sizeof(datatype), PAGE_SIZE/sizeof(datatype));
     while (!kthread_should_stop()) {
         schedule();
     }
@@ -63,7 +64,6 @@ kernel_memory_init(void)
     if (IS_ERR(kthread)) {
         printk(KERN_ERR "Failed to create kernel thread\n");
         //print page size using macro PAGE_SIZE, how large the datatype struct is using sizeof, and how many pages are needed to store nr_structs of datatype
-        printk(KERN_INFO "Page size: %lu\n, datatype struct size %u, num structs per page %lu\n", PAGE_SIZE, sizeof(datatype), PAGE_SIZE/sizeof(datatype));
         return PTR_ERR(kthread);
     }
     
