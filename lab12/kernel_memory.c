@@ -27,6 +27,8 @@ unsigned int nr_pages;
 unsigned int nr_structs_per_page;
 unsigned int order;
 
+static struct page * pages;
+
 static unsigned int
 my_get_order(unsigned int value)
 {
@@ -49,6 +51,12 @@ my_get_order(unsigned int value)
 static int
 thread_fn(void * data)
 {
+    unsigned long page_frame_number;
+    unsigned long p_addr;
+    unsigned long v_addr;
+    int i = 0;
+    int j = 0;
+    int k = 0;
     printk("Hello from thread %s. nr_structs=%u\n", current->comm, nr_structs);
 
     printk(KERN_INFO "Page size: %lu\n, datatype struct size %u, num structs per page %lu\n", PAGE_SIZE, sizeof(datatype), PAGE_SIZE/sizeof(datatype));
@@ -63,6 +71,32 @@ thread_fn(void * data)
     }
     order = my_get_order(nr_pages);
     printk(KERN_INFO "nr_pages %u, nr_structs_per_page %u, order %u\n", nr_pages, nr_structs_per_page, order);
+
+    pages = alloc_pages(GFP_KERNEL, order);
+    if (!pages) {
+        printk(KERN_ERR "Failed to allocate pages\n");
+        return -ENOMEM;
+    }
+
+    page_frame_number = page_to_pfn(pages);
+    p_addr = page_to_phys(pages);
+    v_addr = (unsigned long) page_address(pages);
+
+    for (i = 0; i < nr_pages; i++) {
+        unsigned long cur_page = (unsigned long) p_addr + i*PAGE_SIZE;
+        for (j = 0; j < nr_structs_per_page; j++) {
+            unsigned long cur_struct = cur_page + (j * sizeof(datatype));
+            datatype_t * this_struct = (struct datatype_t *) __va(cur_struct)
+            for (k = 0; k < ARR_SIZE; k++) {
+                this_struct->array[k] = i*nr_structs_per_page*ARR_SIZE + j*ARR_SIZE + k;
+                if ((i == 0) && (j == 0)) {
+                    printk(KERN_INFO "this_struct->array[%d] = %u\n", k, this_struct->array[k]);
+                }
+            }
+        }
+    }
+
+
 
     return 0;
 }
