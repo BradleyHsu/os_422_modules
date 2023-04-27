@@ -89,9 +89,9 @@ thread_fn(void * data)
             datatype * this_struct = (struct datatype_t *) __va(cur_struct);
             for (k = 0; k < ARR_SIZE; k++) {
                 this_struct->array[k] = i*nr_structs_per_page*ARR_SIZE + j*ARR_SIZE + k;
-                if ((j == 0) && (k == 0)) {
-                    printk(KERN_INFO "this_struct->array[%d] = %u\n", k, this_struct->array[k]);
-                }
+                //if ((j == 0) && (k == 0)) {
+                    //printk(KERN_INFO "this_struct->array[%d] = %u\n", k, this_struct->array[k]);
+                //}
             }
         }
     }
@@ -121,8 +121,31 @@ kernel_memory_init(void)
 static void 
 kernel_memory_exit(void)
 {
+    unsigned long page_frame_number;
+    unsigned long p_addr;
+    unsigned long v_addr;
+    int i = 0;
+    int j = 0;
+    int k = 0;
     kthread_stop(kthread);
     printk(KERN_INFO "Unloaded kernel_memory module\n");
+    page_frame_number = page_to_pfn(pages);
+    p_addr = page_to_phys(pages);
+    for (i = 0; i < nr_pages; i++) {
+        unsigned long cur_page = (unsigned long) p_addr + i*PAGE_SIZE;
+        for (j = 0; j < nr_structs_per_page; j++) {
+            unsigned long cur_struct = cur_page + (j * sizeof(datatype));
+            datatype * this_struct = (struct datatype_t *) __va(cur_struct);
+            for (k = 0; k < ARR_SIZE; k++) {
+                int a = i*nr_structs_per_page*ARR_SIZE + j*ARR_SIZE + k;
+                if (this_struct->array[k] != a) {
+                    printk(KERN_ERR "this_struct->array[%d] = %u, expected %d\n", k, this_struct->array[k], a);
+                }
+            }
+        }
+    }
+    printk(KERN_INFO "Successfully verified all data\n");
+    __free_pages(pages, order);
 }
 
 module_init(kernel_memory_init);
