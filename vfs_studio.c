@@ -6,6 +6,13 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
+#include <linux/kthread.h>
+#include <linux/sched.h>
+#include <linux/fs_struct.h>
+#include <linux/fdtable.h>
+#include <linux/nsproxy.h>
+#include <asm/current.h>
+
 
 static struct task_struct *thread;
 
@@ -28,7 +35,13 @@ static int print_task_fields(void *data) {
 static int 
 simple_init(void)
 {
-    printk(KERN_ALERT "simple module initialized\n");
+    printk(KERN_ALERT "vfs module initialized\n");
+    thread = kthread_run(print_task_fields, NULL, "task_fields_thread");
+    if (IS_ERR(thread)) {
+        printk(KERN_ERR "Failed to create kernel thread\n");
+        return PTR_ERR(thread);
+    }
+
     return 0;
 }
 
@@ -36,7 +49,7 @@ simple_init(void)
 static void 
 simple_exit(void)
 {
-    printk(KERN_ALERT "simple module is being unloaded\n");
+    printk(KERN_ALERT "vfs module is being unloaded\n");
 }
 
 module_init(simple_init);
