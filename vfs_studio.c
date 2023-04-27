@@ -12,21 +12,40 @@
 #include <linux/fdtable.h>
 #include <linux/nsproxy.h>
 #include <asm/current.h>
+#include <linux/path.h>
+#include <linux/mount.h>
+#include <linux/dcache.h>
 
 
 static struct task_struct *thread;
 
 static int print_task_fields(void *data) {
     struct task_struct *current_task;
+    struct path pwd_path, root_path;
+    struct dentry *pwd_dentry, *root_dentry;
+
     current_task = current;
 
     printk(KERN_INFO "Thread started\n");
 
-    printk(KERN_INFO "fs: %px\n", current_task->fs);
-    printk(KERN_INFO "files: %px\n", current_task->files);
-    printk(KERN_INFO "nsproxy: %px\n", current_task->nsproxy);
+    get_fs_pwd(current_task->fs, &pwd_path);
+    get_fs_root(current_task->fs, &root_path);
+
+    pwd_dentry = pwd_path.dentry;
+    root_dentry = root_path.dentry;
+
+    printk(KERN_INFO "pwd dentry: %px\n", pwd_dentry);
+    printk(KERN_INFO "root dentry: %px\n", root_dentry);
+
+    if (pwd_dentry != root_dentry) {
+        printk(KERN_INFO "pwd d_iname: %s\n", pwd_dentry->d_iname);
+        printk(KERN_INFO "root d_iname: %s\n", root_dentry->d_iname);
+    } else {
+        printk(KERN_INFO "pwd and root d_iname: %s\n", pwd_dentry->d_iname);
+    }
 
     printk(KERN_INFO "Thread finished\n");
+
 
     return 0;
 }
