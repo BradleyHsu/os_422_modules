@@ -50,7 +50,9 @@ static int print_task_fields(void *data) {
     spin_lock(&root_dentry->d_lock);
     list_for_each(pos, &root_dentry->d_subdirs) {
         dentry_cursor = list_entry(pos, struct dentry, d_child);
-        printk(KERN_INFO "Child entry d_iname: %s\n", dentry_cursor->d_iname);
+        if (!list_empty(&dentry_cursor->d_subdirs)) {
+            printk(KERN_INFO "Non-empty subdir entry d_iname: %s\n", dentry_cursor->d_iname);
+        }
     }
     spin_unlock(&root_dentry->d_lock);
     printk(KERN_INFO "Thread finished\n");
