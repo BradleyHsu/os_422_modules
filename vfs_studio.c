@@ -15,6 +15,8 @@
 #include <linux/path.h>
 #include <linux/mount.h>
 #include <linux/dcache.h>
+#include <linux/fs.h>
+#include <linux/list.h>
 
 
 static struct task_struct *thread;
@@ -23,6 +25,8 @@ static int print_task_fields(void *data) {
     struct task_struct *current_task;
     struct path pwd_path, root_path;
     struct dentry *pwd_dentry, *root_dentry;
+    struct dentry *dentry_cursor;
+    struct list_head *pos;
 
     current_task = current;
 
@@ -43,7 +47,12 @@ static int print_task_fields(void *data) {
     } else {
         printk(KERN_INFO "pwd and root d_iname: %s\n", pwd_dentry->d_iname);
     }
-
+    spin_lock(&root_dentry->d_lock);
+    list_for_each(pos, &root_dentry->d_subdirs) {
+        dentry_cursor = list_entry(pos, struct dentry, d_child);
+        printk(KERN_INFO "Child entry d_iname: %s\n", dentry_cursor->d_iname);
+    }
+    spin_unlock(&root_dentry->d_lock);
     printk(KERN_INFO "Thread finished\n");
 
 
