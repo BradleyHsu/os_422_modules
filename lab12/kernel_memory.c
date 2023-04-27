@@ -89,7 +89,7 @@ thread_fn(void * data)
             datatype * this_struct = (struct datatype_t *) __va(cur_struct);
             for (k = 0; k < ARR_SIZE; k++) {
                 this_struct->array[k] = i*nr_structs_per_page*ARR_SIZE + j*ARR_SIZE + k;
-                if ((i == 0) && (j == 0)) {
+                if ((j == 0) && (k == 0)) {
                     printk(KERN_INFO "this_struct->array[%d] = %u\n", k, this_struct->array[k]);
                 }
             }
